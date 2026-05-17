@@ -1,0 +1,145 @@
+<%- include('partials/header') %>
+
+<h1><%= usuario.nombre %></h1>
+<p class="subtitle"><%= usuario.email %> · ID <%= usuario.id %></p>
+
+<% if (flash === 'usuario_creado') { %>
+  <div class="alert alert-success">Usuario creado.</div>
+<% } %>
+<% if (flash === 'tarjeta_creada') { %>
+  <div class="alert alert-success">Tarjeta registrada (solo últimos 4 dígitos en BD).</div>
+<% } %>
+<% if (flash === 'pago_creado') { %>
+  <div class="alert <%= pagoResult === 'aprobado' ? 'alert-success' : 'alert-warning' %>">
+    Pago <%= pagoResult %> por el procesador.
+  </div>
+<% } %>
+<% if (typeof error !== 'undefined' && error) { %>
+  <div class="alert alert-error"><%= error %></div>
+<% } %>
+
+<div class="layout-split">
+  <div class="card">
+    <h2>Registrar tarjeta ficticia</h2>
+    <form method="post" action="/usuarios/<%= usuario.id %>/tarjetas" class="form-grid cols-2">
+      <div style="grid-column:1/-1">
+        <label for="numero_tarjeta">Número de tarjeta (ficticio)</label>
+        <input id="numero_tarjeta" name="numero_tarjeta" placeholder="4111111111111111" required />
+        <p class="hint">Ejemplo de prueba Visa. No uses tarjetas reales.</p>
+      </div>
+      <div>
+        <label for="titular">Titular</label>
+        <input id="titular" name="titular" required />
+      </div>
+      <div>
+        <label for="marca">Marca (opcional)</label>
+        <select id="marca" name="marca">
+          <option value="">Detectar automático</option>
+          <option value="visa">Visa</option>
+          <option value="mastercard">Mastercard</option>
+          <option value="amex">Amex</option>
+        </select>
+      </div>
+      <div>
+        <label for="mes_vencimiento">Mes venc.</label>
+        <input id="mes_vencimiento" name="mes_vencimiento" type="number" min="1" max="12" required />
+      </div>
+      <div>
+        <label for="anio_vencimiento">Año venc.</label>
+        <input id="anio_vencimiento" name="anio_vencimiento" type="number" min="2020" value="2028" required />
+      </div>
+      <div>
+        <button type="submit" class="btn btn-primary">Registrar tarjeta</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="card">
+    <h2>Nuevo pago</h2>
+    <% if (tarjetas.length === 0) { %>
+      <p class="empty">Registra una tarjeta antes de pagar.</p>
+    <% } else { %>
+      <form method="post" action="/usuarios/<%= usuario.id %>/pagos" class="form-grid">
+        <div>
+          <label for="tarjeta_id">Tarjeta</label>
+          <select id="tarjeta_id" name="tarjeta_id" required>
+            <% tarjetas.forEach(function(t) { %>
+              <option value="<%= t.id %>">
+                **** <%= t.ultimos_cuatro %> · <%= t.marca %> · <%= t.titular %>
+              </option>
+            <% }) %>
+          </select>
+        </div>
+        <div>
+          <label for="monto">Monto</label>
+          <input id="monto" name="monto" type="number" step="0.01" min="0.01" required placeholder="99.99" />
+        </div>
+        <div>
+          <button type="submit" class="btn btn-primary">Procesar pago</button>
+        </div>
+      </form>
+    <% } %>
+  </div>
+</div>
+
+<div class="card">
+  <h2>Tarjetas</h2>
+  <% if (tarjetas.length === 0) { %>
+    <p class="empty">Sin tarjetas.</p>
+  <% } else { %>
+    <table>
+      <thead>
+        <tr>
+          <th>Últimos 4</th>
+          <th>Titular</th>
+          <th>Marca</th>
+          <th>Vence</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% tarjetas.forEach(function(t) { %>
+          <tr>
+            <td>**** <%= t.ultimos_cuatro %></td>
+            <td><%= t.titular %></td>
+            <td><%= t.marca %></td>
+            <td><%= t.mes_vencimiento %>/<%= t.anio_vencimiento %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+</div>
+
+<div class="card">
+  <h2>Historial de pagos</h2>
+  <% if (pagos.length === 0) { %>
+    <p class="empty">Sin pagos registrados.</p>
+  <% } else { %>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Monto</th>
+          <th>Tarjeta</th>
+          <th>Estado</th>
+          <th>Fecha</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% pagos.forEach(function(p) { %>
+          <tr>
+            <td>#<%= p.id %></td>
+            <td>$<%= Number(p.monto).toFixed(2) %></td>
+            <td>**** <%= p.ultimos_cuatro %> (<%= p.marca %>)</td>
+            <td><span class="badge badge-<%= p.estado %>"><%= p.estado %></span></td>
+            <td><%= new Date(p.created_at).toLocaleString('es') %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+</div>
+
+<p><a href="/">← Volver al listado</a></p>
+
+<%- include('partials/footer') %>

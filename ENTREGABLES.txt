@@ -1,0 +1,20 @@
+
+ENTREGABLES:
+
+- Código fuente completo
+Raíz del repo: dynamicore\
+
+- API Node.js
+api/ — código en api/src/, dependencias en api/package.json
+
+- Servicio Python
+payment-service/ — app.py, requirements.txt
+
+- Scripts PostgreSQL
+database/init.sql (esquema), database/setup-local.sql (usuario/BD), docker-compose.yml (Postgres con Docker)
+
+- Colección Postman
+postman/Dynamicore-Payments.postman_collection.json
+
+- Instrucciones instalación y ejecución
+README.md 

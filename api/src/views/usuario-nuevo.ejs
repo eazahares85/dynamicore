@@ -1,0 +1,27 @@
+<%- include('partials/header') %>
+
+<h1>Nuevo usuario</h1>
+<p class="subtitle">Se registrará vía <code>POST /api/usuarios</code></p>
+
+<% if (error) { %>
+  <div class="alert alert-error"><%= error %></div>
+<% } %>
+
+<div class="card">
+  <form method="post" action="/usuarios" class="form-grid">
+    <div>
+      <label for="nombre">Nombre</label>
+      <input id="nombre" name="nombre" type="text" required minlength="2" value="<%= values.nombre || '' %>" />
+    </div>
+    <div>
+      <label for="email">Email</label>
+      <input id="email" name="email" type="email" required value="<%= values.email || '' %>" />
+    </div>
+    <div>
+      <button type="submit" class="btn btn-primary">Crear usuario</button>
+      <a href="/" class="btn btn-ghost" style="margin-left:0.5rem">Cancelar</a>
+    </div>
+  </form>
+</div>
+
+<%- include('partials/footer') %>

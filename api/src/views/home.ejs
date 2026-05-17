@@ -1,0 +1,36 @@
+<%- include('partials/header') %>
+
+<h1>Sistema de pagos</h1>
+<p class="subtitle">Interfaz web que consume el API REST (<code>/api/*</code>)</p>
+
+<% if (flash === 'usuario_creado') { %>
+  <div class="alert alert-success">Usuario creado correctamente.</div>
+<% } %>
+<% if (error) { %>
+  <div class="alert alert-error"><%= error %></div>
+<% } %>
+
+<div class="card">
+  <h2>Usuarios registrados</h2>
+  <% if (usuarios.length === 0) { %>
+    <p class="empty">Aún no hay usuarios. <a href="/usuarios/nuevo">Crear el primero</a></p>
+  <% } else { %>
+    <ul class="user-list">
+      <% usuarios.forEach(function(u) { %>
+        <li>
+          <div>
+            <strong><%= u.nombre %></strong><br />
+            <small style="color:var(--muted)"><%= u.email %></small>
+          </div>
+          <a href="/usuarios/<%= u.id %>" class="btn btn-ghost">Ver detalle →</a>
+        </li>
+      <% }) %>
+    </ul>
+  <% } %>
+</div>
+
+<p style="margin-top:1rem">
+  <a href="/usuarios/nuevo" class="btn btn-primary">+ Nuevo usuario</a>
+</p>
+
+<%- include('partials/footer') %>
